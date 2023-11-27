@@ -4,7 +4,7 @@ This app generates uptime reports of restaurants. It features a trigger/poll arc
 * The data manipulation is done via pandas.  
 * It uses FastAPI for api.  
 * It uses Redis to store report generation status.  
-* It uses PSQL as a data source for the poll data.  
+* It uses PSQL as a data source for the poll data, it assumes that data is stored in the same way as in the CSVs.  
 * It writes the output CSV files to an S3 bucket and gives the url of that file in the poll response.  
 * It is capable of horizontal scaling on kubernetes as a single remote redis instance is used to track the report generation status across app instances.  
 
