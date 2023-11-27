@@ -9,7 +9,7 @@ This app generates uptime reports of restaurants. It features a trigger/poll arc
 * It is capable of horizontal scaling on kubernetes as a single remote redis instance is used to track the report generation status across app instances.  
 
 
-In my tests, generation of 1 report of poll data of 7 days took ~3minutes on my macbook. This time can be further reduced by using parallel pandas features.
+In my tests, generation of 1 report of poll data of 7 days took ~3minutes on my macbook with m1 chip. This time can be further reduced by using parallel pandas features.
 
 
 > NOTE: the ipynb file is present in the sample_data directory
@@ -26,7 +26,7 @@ Response:
 }
 ```
 
-`/get_report` endpoint that will return the status of the report or the csv.  
+`/get_report` endpoint that will return the status of the report or the CSV.  
 Running Response:
 ```
 {
@@ -55,13 +55,14 @@ The data manipulation of the poll data consists of following steps:
 * Export the result to csv
 
 ## Extrapolation of missing data
-In the case of missing data, a simple extrapolation technique is used that takes the status of the last known status as the contious status throughout the missing time interval. No prediction is used to generate missing information as it is not reliable for uptime data.  
-In real life, uptime information of well known websites (openai, google, slack, youtube) is consistent with this technique.  
-In hours where multiple data points are present, a majority filter is used to calculate the majority value of that hour.
-The majority only affects the hour values, it does not affect neighbouring hour's values. They are determined by last known value.
+In the case of missing data, a simple extrapolation technique is used that takes the status of the last known status as the continous status throughout the missing time interval.  
+No prediction is used to generate missing information as it is not reliable for uptime data.  
+In real life, uptime information of well known websites (OpenAI, google, slack, youtube) is consistent with this technique.  
+In hours where multiple data points are present, a majority filter is used to calculate the majority value of that hour.  
+The majority only affects the hour values, it does not affect neighboring hour's values. They are determined by the last known value.
 
 ## Architecture
-The app uses a redis cache to act as central place to poll for report generation status. The actual report generation task on the server is done parallely on a seperate thread and thus the server can handle more requests.  
+The app uses a redis cache to act as central place to poll for report generation status. The actual report generation task on the server is done parallely on a separate thread and thus the server can handle more requests.  
 For scaling, the load balancer can be configured at istio level to use a round-robin method of allocating report generation requests.  
 Sample DestinationRule:
 ```
@@ -85,7 +86,13 @@ spec:
       loadBalancer:
         simple: ROUND_ROBIN
 ```
-Here, the report genreation traffic is distributed across the pods in a round robin fashion ensuring that no single pod is choked at a time. The poll requests can be distributed randomly as they are not CPU intensive.
+Here, 2 versions of the app are deployed `v1` and `v2`. `v1` only exposes the report generation endpoint and `v2` exposes only the status poll endpoint.
+The report generation traffic is distributed across the pods in a round robin fashion ensuring that no single pod is choked at a time.  
+The poll requests can be distributed randomly as they are not CPU intensive.  
+Thus, by using separate replica counts for v1 and v2, the service can be scaled in a more predictable manner where most of the resources are consumed by the report generation process.
+
+![Alt text](arch.png)
+
 ## Setup
 
 1. Install the dependencies:
