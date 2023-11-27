@@ -6,5 +6,6 @@ class Settings(BaseSettings):
     redis_host: str = Field(..., env='REDIS_HOST')
     redis_password: str = Field(..., env='REDIS_PASSWORD')
     redis_port: str = Field(..., env='REDIS_PORT')
+    psql_url: str = Field(..., env='PSQL_URL')
 
 settings = Settings()

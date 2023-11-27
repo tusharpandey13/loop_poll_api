@@ -13,6 +13,7 @@ services:
       - REDIS_HOST=<host>
       - REDIS_PASSWORD=<password>
       - REDIS_PORT=13000
+      - PSQL_URL=<psql url>
     depends_on:
       - db
   # db:
