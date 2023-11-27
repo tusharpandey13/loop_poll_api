@@ -11,6 +11,10 @@ This app generates uptime reports of restaurants. It features a trigger/poll arc
 
 In my tests, generation of 1 report of poll data of 7 days took ~3minutes on my macbook. This time can be further reduced by using parallel pandas features.
 
+
+> NOTE: the ipynb file is present in the sample_data directory
+
+
 ## API
 /echo/{message}: Returns the input string.
 
