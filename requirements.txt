@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+spacy
+boto3
+pandas
+redis
+pydantic-settings
